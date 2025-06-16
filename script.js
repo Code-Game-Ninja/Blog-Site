@@ -416,15 +416,18 @@ const themeToggle = document.getElementById('themeToggle');
 const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
 // Set initial theme
-if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && prefersDark)) {
-    document.documentElement.classList.add('dark');
-    localStorage.setItem('theme', 'dark');
-} else {
-    document.documentElement.classList.remove('dark');
-    localStorage.setItem('theme', 'light');
+function setInitialTheme() {
+    if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && prefersDark)) {
+        document.documentElement.classList.add('dark');
+        localStorage.setItem('theme', 'dark');
+    } else {
+        document.documentElement.classList.remove('dark');
+        localStorage.setItem('theme', 'light');
+    }
 }
 
-themeToggle.addEventListener('click', () => {
+// Toggle theme
+function toggleTheme() {
     if (localStorage.getItem('theme') === 'dark') {
         document.documentElement.classList.remove('dark');
         localStorage.setItem('theme', 'light');
@@ -432,26 +435,41 @@ themeToggle.addEventListener('click', () => {
         document.documentElement.classList.add('dark');
         localStorage.setItem('theme', 'dark');
     }
-});
+}
 
-// Mobile Menu
+// Mobile Menu Functionality
 const mobileMenuButton = document.getElementById('mobileMenuButton');
 const mobileMenu = document.getElementById('mobileMenu');
 const closeMobileMenu = document.getElementById('closeMobileMenu');
 
-mobileMenuButton.addEventListener('click', () => {
+function openMobileMenu() {
     mobileMenu.classList.remove('hidden');
-});
+    document.body.style.overflow = 'hidden'; // Prevent scrolling when menu is open
+}
 
-closeMobileMenu.addEventListener('click', () => {
+function closeMobileMenuHandler() {
     mobileMenu.classList.add('hidden');
-});
+    document.body.style.overflow = ''; // Re-enable scrolling
+}
 
-// Close mobile menu when clicking outside
-mobileMenu.addEventListener('click', (e) => {
-    if (e.target === mobileMenu) {
-        mobileMenu.classList.add('hidden');
-    }
+// Event Listeners
+document.addEventListener('DOMContentLoaded', () => {
+    // Set initial theme
+    setInitialTheme();
+
+    // Theme toggle
+    themeToggle.addEventListener('click', toggleTheme);
+
+    // Mobile menu
+    mobileMenuButton.addEventListener('click', openMobileMenu);
+    closeMobileMenu.addEventListener('click', closeMobileMenuHandler);
+
+    // Close mobile menu when clicking outside
+    mobileMenu.addEventListener('click', (e) => {
+        if (e.target === mobileMenu) {
+            closeMobileMenuHandler();
+        }
+    });
 });
 
 // Initial render
