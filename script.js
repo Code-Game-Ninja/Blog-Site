@@ -84,7 +84,7 @@ const posts = [
                     </div>
                     <p>These advancements are enabling researchers to tackle problems that were previously computationally infeasible.</p>`,
         date: "June 10, 2025",
-        image: "https://images.unsplash.com/photo-1677442135136-760c813a743d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
+        image: "img/Nvidia.jpeg",
         tags: ["NVIDIA", "AI", "GPU", "Hardware"],
         readTime: "8 min read",
         category: "Artificial Intelligence"
@@ -166,7 +166,7 @@ const posts = [
                     </div>
                     <p>The pace of innovation in this field shows no signs of slowing down.</p>`,
         date: "June 3, 2025",
-        image: "https://images.unsplash.com/photo-1677442135139-3af8b33c5c10?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80",
+        image: "img/Generative-Ai.jpeg",
         tags: ["AI", "Generative", "Machine Learning"],
         readTime: "10 min read",
         category: "Artificial Intelligence"
@@ -470,6 +470,46 @@ document.addEventListener('DOMContentLoaded', () => {
             closeMobileMenuHandler();
         }
     });
+});
+function showSubscribePopup(name) {
+    const popup = document.createElement('div');
+    popup.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+    popup.innerHTML = `
+        <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-xl max-w-md w-full mx-4 transform transition-all duration-300 scale-95 animate-fade-in">
+            <div class="text-center">
+                <i class="fas fa-envelope-open-text text-5xl text-teal-500 mb-4"></i>
+                <h3 class="text-2xl font-bold mb-2">Thank you for subscribing, ${name}!</h3>
+                <p class="text-gray-600 dark:text-gray-300 mb-4">You'll now receive our latest posts directly to your inbox.</p>
+                <button onclick="this.parentElement.parentElement.parentElement.remove()" 
+                        class="bg-teal-500 hover:bg-teal-600 text-white font-medium py-2 px-6 rounded-lg transition">
+                    Close
+                </button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(popup);
+
+    // Close popup when clicking outside
+    popup.addEventListener('click', (e) => {
+        if (e.target === popup) {
+            popup.remove();
+        }
+    });
+}
+// Newsletter form submission
+document.querySelector('#newsletter form').addEventListener('submit', function (e) {
+    e.preventDefault();
+    const name = this.querySelector('input[type="text"]').value.trim();
+    const email = this.querySelector('input[type="email"]').value.trim();
+
+    if (name && email) {
+        // Here you would typically send the data to your server
+        // For now, we'll just show the popup
+        showSubscribePopup(name);
+
+        // Reset the form
+        this.reset();
+    }
 });
 
 // Initial render
