@@ -417,23 +417,17 @@ const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
 // Set initial theme
 function setInitialTheme() {
+    const header = document.querySelector('header');
     if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && prefersDark)) {
         document.documentElement.classList.add('dark');
         localStorage.setItem('theme', 'dark');
+        header.classList.add('dark:bg-gradient-to-br');
+        header.classList.remove('bg-white');
     } else {
-        document.documentElement.classList.remove('dark');
+        document.documentElement.classList.add('dark'); // Keep rest of page dark
+        header.classList.remove('dark:bg-gradient-to-br');
+        header.classList.add('bg-white');
         localStorage.setItem('theme', 'light');
-    }
-}
-
-// Toggle theme
-function toggleTheme() {
-    if (localStorage.getItem('theme') === 'dark') {
-        document.documentElement.classList.remove('dark');
-        localStorage.setItem('theme', 'light');
-    } else {
-        document.documentElement.classList.add('dark');
-        localStorage.setItem('theme', 'dark');
     }
 }
 
@@ -444,12 +438,19 @@ const closeMobileMenu = document.getElementById('closeMobileMenu');
 
 function openMobileMenu() {
     mobileMenu.classList.remove('hidden');
+    // Trigger reflow for transition
+    void mobileMenu.offsetWidth;
+    mobileMenu.classList.add('open');
     document.body.style.overflow = 'hidden'; // Prevent scrolling when menu is open
 }
 
 function closeMobileMenuHandler() {
-    mobileMenu.classList.add('hidden');
-    document.body.style.overflow = ''; // Re-enable scrolling
+    mobileMenu.classList.remove('open');
+    // Wait for transition to finish before hiding
+    setTimeout(() => {
+        mobileMenu.classList.add('hidden');
+        document.body.style.overflow = '';
+    }, 300); // Match the CSS transition duration
 }
 
 // Event Listeners
@@ -457,8 +458,20 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set initial theme
     setInitialTheme();
 
-    // Theme toggle
-    themeToggle.addEventListener('click', toggleTheme);
+    // Add ripple effect to all .ripple elements
+    document.querySelectorAll('.ripple').forEach(el => {
+        el.addEventListener('click', function(e) {
+            const circle = document.createElement('span');
+            circle.className = 'ripple-effect';
+            const rect = el.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            circle.style.width = circle.style.height = size + 'px';
+            circle.style.left = (e.clientX - rect.left - size / 2) + 'px';
+            circle.style.top = (e.clientY - rect.top - size / 2) + 'px';
+            el.appendChild(circle);
+            circle.addEventListener('animationend', () => circle.remove());
+        });
+    });
 
     // Mobile menu
     mobileMenuButton.addEventListener('click', openMobileMenu);
@@ -469,6 +482,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target === mobileMenu) {
             closeMobileMenuHandler();
         }
+    });
+
+    // Hide mobile menu after clicking a nav link
+    const mobileNavLinks = mobileMenu.querySelectorAll('nav a');
+    mobileNavLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            closeMobileMenuHandler();
+        });
     });
 });
 function showSubscribePopup(name) {
